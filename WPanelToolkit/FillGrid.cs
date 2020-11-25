@@ -43,7 +43,7 @@ namespace WPanelToolkit
 					columns--; // The scaling factor sometimes creates layouts which are too wide
 				}
 
-				if(rows == 1) // The above check does not account properly for 1 row grids (there should never be extra columns in this case)
+				if (rows == 1) // The above check does not account properly for 1 row grids (there should never be extra columns in this case)
 				{
 					columns = elements;
 				}
@@ -63,7 +63,8 @@ namespace WPanelToolkit
 				Size panelDesiredSize = new Size(maxWidth * columns, maxHeight * rows);
 				lastPanelSize = panelDesiredSize;
 				return panelDesiredSize;
-			}catch(Exception e) // Preserves last arrangement if either dimension hits zero
+			}
+			catch (Exception e) // Preserves last arrangement if either dimension hits zero
 			{
 				return lastPanelSize;
 			}
@@ -74,29 +75,23 @@ namespace WPanelToolkit
 			{
 				double elementWidth = finalSize.Width / columns;
 				double elementHeight = finalSize.Height / rows;
-				double xOffset = 0;
 
 				for (int i = 0; i < InternalChildren.Count; i++)
 				{
 					int x_index = i % columns;
 					int y_index = i / columns;
 
-					double filledWidth = 0;
-					if (y_index == rows - 1 && InternalChildren.Count % columns > 1)
+					if (x_index == 0 && y_index == rows - 1 && InternalChildren.Count % columns > 0)
 					{
-						filledWidth = (elementWidth * (InternalChildren.Count % columns)) / (columns - (InternalChildren.Count % columns));
-					}
-					else if (i + 1 == InternalChildren.Count && InternalChildren.Count % columns == 1)
-					{
-						filledWidth = finalSize.Width; // The previous adjustment doesn't reduce to this for a row with 1 element, unfortunately
+						elementWidth = finalSize.Width / (InternalChildren.Count % columns);
 					}
 
-					Rect boundingRect = new Rect(x_index * elementWidth + xOffset, y_index * elementHeight, elementWidth + filledWidth, elementHeight);
-					xOffset += filledWidth;
+					Rect boundingRect = new Rect(x_index * elementWidth, y_index * elementHeight, elementWidth, elementHeight);
 
 					InternalChildren[i].Arrange(boundingRect);
 				}
-			}catch(Exception e) // Preserves last arrangement if either dimension hits zero
+			}
+			catch (Exception e) // Preserves last arrangement if either dimension hits zero
 			{
 
 			}
